@@ -9,3 +9,6 @@ test-only:
 
 maturin-dev:
   poetry run maturin develop
+
+install:
+  poetry install
