@@ -7,6 +7,10 @@ test:
 test-only:
   poetry run pytest
 
+format:
+  poetry run black -q .
+  cargo fmt
+
 maturin-dev:
   poetry run maturin develop
 
