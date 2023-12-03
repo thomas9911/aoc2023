@@ -1,7 +1,5 @@
-use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use std::collections::HashMap;
-use std::io::{BufRead, BufReader};
 use std::str::FromStr;
 
 type InnerTokens = HashMap<(usize, usize), SchemaToken>;
@@ -177,7 +175,7 @@ impl Tokenizer {
             // is number and next is empty or symbol
             if item.is_number() && (next_item.is_none() || next_item.unwrap().is_symbol()) {
                 if self.has_symbol_around(x - (current_number_text.len() - 1), x, y)? {
-                    let number: usize = current_number_text.parse().unwrap();
+                    let number: usize = current_number_text.parse()?;
                     total += number;
                 }
 
@@ -226,133 +224,181 @@ impl Tokenizer {
 
             if locations.diagonal_left_up && locations.up == false {
                 let mut reverse_string = String::new();
-                for asdf in (0..*gear_x).rev() {
-                    if let Some(token) = self.tokens.get(&(asdf, gear_y - 1)) {
+                for x_pointer in (0..*gear_x).rev() {
+                    if let Some(token) = self.tokens.get(&(x_pointer, gear_y - 1)) {
                         token.as_number().map(|x| reverse_string.push(x));
                     } else {
                         break;
                     }
                 }
                 let string: String = reverse_string.chars().rev().collect();
-                numbers.push(string.parse().unwrap());
+                numbers.push(string.parse()?);
             }
             if locations.diagonal_left_down && locations.down == false {
                 let mut reverse_string = String::new();
-                for asdf in (0..*gear_x).rev() {
-                    if let Some(token) = self.tokens.get(&(asdf, gear_y + 1)) {
+                for x_pointer in (0..*gear_x).rev() {
+                    if let Some(token) = self.tokens.get(&(x_pointer, gear_y + 1)) {
                         token.as_number().map(|x| reverse_string.push(x));
                     } else {
                         break;
                     }
                 }
                 let string: String = reverse_string.chars().rev().collect();
-                numbers.push(string.parse().unwrap());
+                numbers.push(string.parse()?);
             }
 
             if locations.diagonal_right_up && locations.up == false {
                 let mut string = String::new();
-                for asdf in (gear_x + 1)..=self.size.0 {
-                    if let Some(token) = self.tokens.get(&(asdf, gear_y - 1)) {
+                for x_pointer in (gear_x + 1)..=self.size.0 {
+                    if let Some(token) = self.tokens.get(&(x_pointer, gear_y - 1)) {
                         token.as_number().map(|x| string.push(x));
                     } else {
                         break;
                     }
                 }
-                numbers.push(string.parse().unwrap());
+                numbers.push(string.parse()?);
             }
 
             if locations.diagonal_right_down && locations.down == false {
                 let mut string = String::new();
-                for asdf in (gear_x + 1)..=self.size.0 {
-                    if let Some(token) = self.tokens.get(&(asdf, gear_y + 1)) {
+                for x_pointer in (gear_x + 1)..=self.size.0 {
+                    if let Some(token) = self.tokens.get(&(x_pointer, gear_y + 1)) {
                         token.as_number().map(|x| string.push(x));
                     } else {
                         break;
                     }
                 }
-                numbers.push(string.parse().unwrap());
+                numbers.push(string.parse()?);
             }
 
             if locations.left {
                 let mut reverse_string = String::new();
-                for asdf in (0..*gear_x).rev() {
-                    if let Some(token) = self.tokens.get(&(asdf, *gear_y)) {
+                for x_pointer in (0..*gear_x).rev() {
+                    if let Some(token) = self.tokens.get(&(x_pointer, *gear_y)) {
                         token.as_number().map(|x| reverse_string.push(x));
                     } else {
                         break;
                     }
                 }
                 let string: String = reverse_string.chars().rev().collect();
-                numbers.push(string.parse().unwrap());
+                numbers.push(string.parse()?);
             }
 
             if locations.right {
                 let mut string = String::new();
-                for asdf in (gear_x + 1)..=self.size.0 {
-                    if let Some(token) = self.tokens.get(&(asdf, *gear_y)) {
+                for x_pointer in (gear_x + 1)..=self.size.0 {
+                    if let Some(token) = self.tokens.get(&(x_pointer, *gear_y)) {
                         token.as_number().map(|x| string.push(x));
                     } else {
                         break;
                     }
                 }
-                numbers.push(string.parse().unwrap());
+                numbers.push(string.parse()?);
             }
 
             if locations.up {
-                if locations.diagonal_left_up {
+                if locations.diagonal_left_up && locations.diagonal_right_up == false {
                     let mut reverse_string = String::new();
-                    for asdf in (0..=*gear_x).rev() {
-                        if let Some(token) = self.tokens.get(&(asdf, gear_y - 1)) {
+                    for x_pointer in (0..=*gear_x).rev() {
+                        if let Some(token) = self.tokens.get(&(x_pointer, gear_y - 1)) {
                             token.as_number().map(|x| reverse_string.push(x));
                         } else {
                             break;
                         }
                     }
                     let string: String = reverse_string.chars().rev().collect();
-                    numbers.push(string.parse().unwrap());
+                    numbers.push(string.parse()?);
                 }
-
-                if locations.diagonal_right_up {
+                if locations.diagonal_right_up && locations.diagonal_left_up == false {
                     let mut string = String::new();
-                    for asdf in *gear_x..=self.size.0 {
-                        if let Some(token) = self.tokens.get(&(asdf, gear_y - 1)) {
+                    for x_pointer in *gear_x..=self.size.0 {
+                        if let Some(token) = self.tokens.get(&(x_pointer, gear_y - 1)) {
                             token.as_number().map(|x| string.push(x));
                         } else {
                             break;
                         }
                     }
-                    numbers.push(string.parse().unwrap());
+                    numbers.push(string.parse()?);
+                }
+                if locations.diagonal_left_up == false && locations.diagonal_right_up == false {
+                    let mut string = String::new();
+                    self.tokens
+                        .get(&(*gear_x, gear_y - 1))
+                        .and_then(SchemaToken::as_number)
+                        .map(|x| string.push(x));
+                    numbers.push(string.parse()?);
+                }
+                // can we assume that a number is a maximum of length 3 ?
+                if locations.diagonal_left_up && locations.up && locations.diagonal_right_up {
+                    let mut string = String::new();
+                    self.tokens
+                        .get(&(*gear_x - 1, gear_y - 1))
+                        .and_then(SchemaToken::as_number)
+                        .map(|x| string.push(x));
+                    self.tokens
+                        .get(&(*gear_x, gear_y - 1))
+                        .and_then(SchemaToken::as_number)
+                        .map(|x| string.push(x));
+                    self.tokens
+                        .get(&(*gear_x + 1, gear_y - 1))
+                        .and_then(SchemaToken::as_number)
+                        .map(|x| string.push(x));
+                    numbers.push(string.parse()?);
                 }
             }
 
             if locations.down {
-                if locations.diagonal_left_down {
+                if locations.diagonal_left_down && locations.diagonal_right_down == false {
                     let mut reverse_string = String::new();
-                    for asdf in (0..=*gear_x).rev() {
-                        if let Some(token) = self.tokens.get(&(asdf, gear_y + 1)) {
+                    for x_pointer in (0..=*gear_x).rev() {
+                        if let Some(token) = self.tokens.get(&(x_pointer, gear_y + 1)) {
                             token.as_number().map(|x| reverse_string.push(x));
                         } else {
                             break;
                         }
                     }
                     let string: String = reverse_string.chars().rev().collect();
-                    numbers.push(string.parse().unwrap());
+                    numbers.push(string.parse()?);
                 }
 
-                if locations.diagonal_right_down {
+                if locations.diagonal_right_down && locations.diagonal_left_down == false {
                     let mut string = String::new();
-                    for asdf in *gear_x..=self.size.0 {
-                        if let Some(token) = self.tokens.get(&(asdf, gear_y + 1)) {
+                    for x_pointer in *gear_x..=self.size.0 {
+                        if let Some(token) = self.tokens.get(&(x_pointer, gear_y + 1)) {
                             token.as_number().map(|x| string.push(x));
                         } else {
                             break;
                         }
                     }
-                    numbers.push(string.parse().unwrap());
+                    numbers.push(string.parse()?);
+                }
+                if locations.diagonal_left_down == false && locations.diagonal_right_down == false {
+                    let mut string = String::new();
+                    self.tokens
+                        .get(&(*gear_x, gear_y + 1))
+                        .and_then(SchemaToken::as_number)
+                        .map(|x| string.push(x));
+                    numbers.push(string.parse()?);
+                }
+                // can we assume that a number is a maximum of length 3 ?
+                if locations.diagonal_left_down && locations.down && locations.diagonal_right_down {
+                    let mut string = String::new();
+                    self.tokens
+                        .get(&(*gear_x - 1, gear_y + 1))
+                        .and_then(SchemaToken::as_number)
+                        .map(|x| string.push(x));
+                    self.tokens
+                        .get(&(*gear_x, gear_y + 1))
+                        .and_then(SchemaToken::as_number)
+                        .map(|x| string.push(x));
+                    self.tokens
+                        .get(&(*gear_x + 1, gear_y + 1))
+                        .and_then(SchemaToken::as_number)
+                        .map(|x| string.push(x));
+                    numbers.push(string.parse()?);
                 }
             }
 
-            // dbg!(numbers);
             if numbers.len() == 2 {
                 ratios.push(numbers[0] * numbers[1]);
             }
@@ -392,7 +438,7 @@ pub fn day03a(file_path: &str) -> PyResult<usize> {
     let data = std::fs::read_to_string(file_path)?;
     let data = data.trim();
 
-    let tokenizer: Tokenizer = data.parse().unwrap();
+    let tokenizer: Tokenizer = data.parse()?;
 
     tokenizer.sum_valid_numbers()
 }
@@ -402,7 +448,7 @@ pub fn day03b(file_path: &str) -> PyResult<usize> {
     let data = std::fs::read_to_string(file_path)?;
     let data = data.trim();
 
-    let tokenizer: Tokenizer = data.parse().unwrap();
+    let tokenizer: Tokenizer = data.parse()?;
     let gear_locations = tokenizer.gather_gear_locations()?;
     let gear_ratios = tokenizer.find_valid_gear_ratios(&gear_locations)?;
 

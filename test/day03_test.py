@@ -75,4 +75,4 @@ def test_day03a():
 
 
 def test_day03b():
-    assert 467835 == aoc2023.day03b("data/day03_debug.txt")
+    assert 86879020 == aoc2023.day03b("data/day03.txt")
