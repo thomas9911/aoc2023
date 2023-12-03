@@ -68,19 +68,12 @@ impl Tokenizer {
             if let SchemaToken::Number(ch) = item {
                 current_number_text.push(*ch);
             }
-            // dbg!(
-            //     (x, y),
-            //     &item,
-            //     &current_number_text,
-            //     self.tokens.get(&(x + 1 , y))
-            // );
 
             // is number and next is empty
             let next_item = self.tokens.get(&(x + 1, y));
             if item.is_number() && (next_item.is_none() || next_item.unwrap().is_symbol()) {
                 if self.has_symbol_around(x - (current_number_text.len() - 1), x, y)? {
                     let number: usize = current_number_text.parse()?;
-                    dbg!(number);
                     total += number;
                 }
 
@@ -92,15 +85,10 @@ impl Tokenizer {
     }
 
     pub fn has_symbol_around(&self, from: usize, to: usize, y: usize) -> PyResult<bool> {
-        // dbg!("here", &(from, to, y));
-
-        // for (area_x, area_y) in (x.saturating_sub(1)..=x.saturating_add(1))
-        //     .zip(y.saturating_sub(1)..=y.saturating_add(1))
         for (area_y, area_x) in (y.saturating_sub(1)..=y.saturating_add(1))
             .flat_map(|a| (from.saturating_sub(1)..=to.saturating_add(1)).map(move |b| (a, b)))
         {
             if let Some(SchemaToken::Symbol) = self.tokens.get(&(area_x, area_y)) {
-                // dbg!((area_x, area_y));
                 return Ok(true);
             }
         }
@@ -129,7 +117,7 @@ impl FromStr for Tokenizer {
 
         Ok(Tokenizer {
             tokens,
-            size: (max_x, max_y),
+            size: (max_x+1, max_y+1),
         })
     }
 }

@@ -61,4 +61,4 @@ def test_day03a_parse_tokens2():
 
 
 def test_day03a():
-    assert 1734 == aoc2023.day03a("data/day03.txt")
+    assert 540131 == aoc2023.day03a("data/day03.txt")
