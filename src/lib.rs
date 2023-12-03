@@ -16,5 +16,6 @@ fn aoc2023(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<day03::Tokenizer>()?;
     m.add_function(wrap_pyfunction!(day03::day03a, m)?)?;
     m.add_function(wrap_pyfunction!(day03::day03a_parse_tokens, m)?)?;
+    m.add_function(wrap_pyfunction!(day03::day03b, m)?)?;
     Ok(())
 }
