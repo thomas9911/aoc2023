@@ -1,15 +1,15 @@
 #!/usr/bin/env just --justfile
 
-test:
+test *ARGS:
   @just maturin-dev
-  @just test-only
+  @just test-only {{ARGS}}
 
-test-only:
-  poetry run pytest
+test-only *ARGS:
+  poetry run pytest {{ARGS}}
 
 format:
   poetry run black -q .
-  cargo fmt
+  cargo +nightly fmt
 
 maturin-dev:
   poetry run maturin develop

@@ -1,9 +1,7 @@
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
-use std::{
-    fs::File,
-    io::{BufRead, BufReader},
-};
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 
 const DIGITS: [&str; 10] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
