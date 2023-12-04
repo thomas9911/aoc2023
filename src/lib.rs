@@ -3,6 +3,7 @@ use pyo3::prelude::*;
 pub mod day01;
 pub mod day02;
 pub mod day03;
+pub mod day04;
 
 /// A Python module implemented in Rust.
 #[pymodule]
@@ -17,5 +18,7 @@ fn aoc2023(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(day03::day03a, m)?)?;
     m.add_function(wrap_pyfunction!(day03::day03a_parse_tokens, m)?)?;
     m.add_function(wrap_pyfunction!(day03::day03b, m)?)?;
+    m.add_function(wrap_pyfunction!(day04::day04a, m)?)?;
+    m.add_function(wrap_pyfunction!(day04::day04b, m)?)?;
     Ok(())
 }
