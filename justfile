@@ -16,3 +16,6 @@ maturin-dev:
 
 install:
   poetry install
+
+new-day day:
+  bash ./adder.sh {{day}}
