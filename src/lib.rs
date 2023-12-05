@@ -4,6 +4,7 @@ pub mod day01;
 pub mod day02;
 pub mod day03;
 pub mod day04;
+pub mod day05;
 
 /// A Python module implemented in Rust.
 #[pymodule]
@@ -20,5 +21,7 @@ fn aoc2023(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(day03::day03b, m)?)?;
     m.add_function(wrap_pyfunction!(day04::day04a, m)?)?;
     m.add_function(wrap_pyfunction!(day04::day04b, m)?)?;
+    m.add_function(wrap_pyfunction!(day05::day05a, m)?)?;
+    m.add_function(wrap_pyfunction!(day05::day05b, m)?)?;
     Ok(())
 }
