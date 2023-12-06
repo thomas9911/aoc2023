@@ -210,7 +210,7 @@ impl Map {
     }
 }
 
-fn deref_bound<T: Copy>(bound: Bound<&T>) -> Bound<T> {
+pub fn deref_bound<T: Copy>(bound: Bound<&T>) -> Bound<T> {
     match bound {
         Bound::Excluded(x) => Bound::Excluded(*x),
         Bound::Included(x) => Bound::Included(*x),
@@ -218,7 +218,7 @@ fn deref_bound<T: Copy>(bound: Bound<&T>) -> Bound<T> {
     }
 }
 
-fn add_to_bound<T: std::ops::Add<Output = T>>(bound: Bound<T>, number: T) -> Bound<T> {
+pub fn add_to_bound<T: std::ops::Add<Output = T>>(bound: Bound<T>, number: T) -> Bound<T> {
     match bound {
         Bound::Excluded(x) => Bound::Excluded(x + number),
         Bound::Included(x) => Bound::Included(x + number),
@@ -226,7 +226,7 @@ fn add_to_bound<T: std::ops::Add<Output = T>>(bound: Bound<T>, number: T) -> Bou
     }
 }
 
-fn sub_off_bound<T: std::ops::Sub<Output = T>>(bound: Bound<T>, number: T) -> Bound<T> {
+pub fn sub_off_bound<T: std::ops::Sub<Output = T>>(bound: Bound<T>, number: T) -> Bound<T> {
     match bound {
         Bound::Excluded(x) => Bound::Excluded(x - number),
         Bound::Included(x) => Bound::Included(x - number),
@@ -234,7 +234,7 @@ fn sub_off_bound<T: std::ops::Sub<Output = T>>(bound: Bound<T>, number: T) -> Bo
     }
 }
 
-fn bound_to_inner(bound: Bound<usize>) -> usize {
+pub fn bound_to_inner(bound: Bound<usize>) -> usize {
     match bound {
         Bound::Excluded(x) => x,
         Bound::Included(x) => x,
