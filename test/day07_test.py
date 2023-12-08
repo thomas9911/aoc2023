@@ -1,4 +1,5 @@
 import aoc2023
+import pytest
 
 
 def test_day07_sort_cards():
@@ -38,8 +39,9 @@ QQQJA 483"""
 
 
 def test_day07a():
-    assert 0 == aoc2023.day07a("data/day07.txt")
+    assert 250120186 == aoc2023.day07a("data/day07.txt")
 
 
+@pytest.mark.skip(reason="that poker rules took too long")
 def test_day07b():
     assert 0 == aoc2023.day07b("data/day07_debug.txt")

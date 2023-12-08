@@ -206,6 +206,6 @@ pub fn day07a(file_path: &str) -> PyResult<usize> {
 }
 
 #[pyfunction]
-pub fn day07b(file_path: &str) -> PyResult<usize> {
+pub fn day07b(_file_path: &str) -> PyResult<usize> {
     todo!()
 }
