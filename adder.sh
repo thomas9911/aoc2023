@@ -9,7 +9,7 @@ fi
 DAY=$(printf "%02d" "$1")
 
 function previous_day() {
-    input_number=${DAY/^0*//}
+    input_number=${DAY/#0/}
     result=$((input_number - 1))
     result_with_zero=$(printf "%02d" "$result")
     echo "$result_with_zero"
