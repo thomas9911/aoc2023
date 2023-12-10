@@ -4,6 +4,10 @@ test *ARGS:
   @just maturin-dev
   @just test-only {{ARGS}}
 
+test-release *ARGS:
+  @just maturin-release
+  @just test-only {{ARGS}}
+
 test-only *ARGS:
   poetry run pytest {{ARGS}}
 
@@ -13,6 +17,9 @@ format:
 
 maturin-dev:
   poetry run maturin develop
+
+maturin-release:
+  poetry run maturin develop --release
 
 install:
   poetry install
