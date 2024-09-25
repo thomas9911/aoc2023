@@ -26,3 +26,6 @@ install:
 
 new-day day:
   bash ./adder.sh {{day}}
+
+go:
+  go test ./go/
